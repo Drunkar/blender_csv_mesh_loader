@@ -8,7 +8,7 @@ bl_info = {
     "name": "CSV mesh loader",
     "author": "Drunkar",
     "version": (0, 1),
-    "blender": (2, 7, 9),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh > CSV mesh loader",
     "description": "Create mesh or curve from csv of node positions.",
     "warning": "",
@@ -49,9 +49,8 @@ class CSVMeshLoader(bpy.types.Operator):
         mesh = bpy.data.meshes.new("mesh")
         obj = bpy.data.objects.new(obj_name, mesh)
         scene = bpy.context.scene
-        scene.objects.link(obj)
-        scene.objects.active = obj
-        obj.select = True
+        scene.collection.objects.link(obj)
+        obj.select_set(True)
 
         mesh = bpy.context.object.data
         bm = bmesh.new()
@@ -68,9 +67,7 @@ class CSVMeshLoader(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        # ファイルブラウザ表示
         wm.fileselect_add(self)
-
         return {'RUNNING_MODAL'}
 
 
@@ -79,14 +76,21 @@ def menu_func(self, context):
                          text="CSV mesh loader")
 
 
+classes = (
+    CSVMeshLoader,
+)
+
+
 def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
 
 
 if __name__ == "__main__":
