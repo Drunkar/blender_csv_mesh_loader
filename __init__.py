@@ -50,7 +50,10 @@ class CSVMeshLoader(bpy.types.Operator):
         obj = bpy.data.objects.new(obj_name, mesh)
         scene = bpy.context.scene
         scene.collection.objects.link(obj)
-        obj.select_set(True)
+        if bpy.app.version < (2, 80, 0):
+            obj.select = True
+        else:
+            obj.select_set(True)
 
         mesh = bpy.context.object.data
         bm = bmesh.new()
