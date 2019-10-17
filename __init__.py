@@ -49,10 +49,12 @@ class CSVMeshLoader(bpy.types.Operator):
         mesh = bpy.data.meshes.new("mesh")
         obj = bpy.data.objects.new(obj_name, mesh)
         scene = bpy.context.scene
-        scene.collection.objects.link(obj)
         if bpy.app.version < (2, 80, 0):
+            scene.objects.link(obj)
+            scene.objects.active = obj
             obj.select = True
         else:
+            scene.collection.objects.link(obj)
             obj.select_set(True)
 
         mesh = bpy.context.object.data
