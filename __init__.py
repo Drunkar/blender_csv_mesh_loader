@@ -55,7 +55,7 @@ class CSVMeshLoader(bpy.types.Operator):
             obj.select = True
         else:
             scene.collection.objects.link(obj)
-            obj.select_set(True)
+            bpy.context.view_layer.objects.active = obj
 
         mesh = bpy.context.object.data
         bm = bmesh.new()
